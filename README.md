@@ -38,9 +38,14 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 | Rotary Encoder SW    | 5   |
 | Rotary Encoder CLK   | 18  |
 | Rotary Encoder DT    | 19  |
+| Rotary Encoder VIN   | VIN |
+| Rotary Encoder GND   | GND |
 | OLED SDA             | 21  |
 | OLED SCL             | 22  |
-| Buzzer               | 23  |
+| OLED VIN             | VIN |
+| OLED GND             | GND |
+| Buzzer +ve           | 23  |
+| Buzzer -ve           | GND  |
 
 ## Firmware & Assembly
 The firmware consists of a single sketch file, easily compiled using the Arduino IDE (with ESP32 support and necessary libraries installed). Verify functionality before assembling the components on the breadboard.

@@ -11,29 +11,29 @@ Adafruit_SSD1306 display(128, 64, &Wire, -1);
 #define BUZZER_PIN 23  // Buzzer pin added
 
 //-----------------------------------------------
-int flowMinutes = 0;   // Total flow minutes
-int menuIndex = 0;     // 0 for UP, 1 for DOWN, 2 for Reset
-String menuOptions[3] = {"UP", "DOWN", "RESET"};
-unsigned long lastActivityTime = 0;
-const unsigned long inactivityLimit = 5 * 60000;
+int flowMinutes = 0;   // Total flow minutes to track productivity
+int menuIndex = 0;     // Menu index for navigation
+String menuOptions[3] = {"UP", "DOWN", "RESET"}; // Menu options
+unsigned long lastActivityTime = 0; // Tracks the last user activity timestamp
+const unsigned long inactivityLimit = 5 * 60000; // Inactivity timeout for idle state (5 minutes)
 
 enum State { MENU, COUNTING_UP, COUNTING_DOWN, SELECTING_DOWN_DURATION, IDLE };
 State currentState = MENU;
 
-int countdownValue = 50;
+int countdownValue = 50; // Default countdown timer value in minutes
 int initialCountdownValue = 50;
 unsigned long previousMillis = 0;
 int elapsedMinutes = 0;
 bool isCounting = false;
 unsigned long buttonDebounceTime = 0;
-const unsigned long buttonDebounceDelay = 800;
+const unsigned long buttonDebounceDelay = 800; // Debounce time for button presses (800 ms)
 
 // Rotary encoder debounce variables
 unsigned long lastRotaryTime = 0;
-const unsigned long rotaryDebounceDelay = 150;
+const unsigned long rotaryDebounceDelay = 150; // Debounce delay for rotary encoder (150 ms)
 
 // IDLE mode extended behavior
-const unsigned long displayOffTimeLimit = 30 * 60000;
+const unsigned long displayOffTimeLimit = 30 * 60000; // Display off after 30 minutes of inactivity
 unsigned long idleStartTime = 0;
 bool displayOff = false;
 
@@ -49,24 +49,24 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
   
-  handleRotaryInput();
-  handleButtonPresses(currentMillis);
-  handleCounting(currentMillis);
-  handleInactivity(currentMillis);
+  handleRotaryInput(); // Handle rotary encoder navigation
+  handleButtonPresses(currentMillis); // Handle button press events
+  handleCounting(currentMillis); // Handle counting logic
+  handleInactivity(currentMillis); // Handle device inactivity logic
 }
 
 //=========================================================
 void initHardware() {
-  pinMode(CLK, INPUT);
-  pinMode(DT, INPUT);
-  pinMode(SW, INPUT);
+  pinMode(CLK, INPUT); // Rotary encoder CLK pin
+  pinMode(DT, INPUT);  // Rotary encoder DT pin
+  pinMode(SW, INPUT);  // Rotary encoder switch pin
   pinMode(BUZZER_PIN, OUTPUT);  // Buzzer initialization
-  Serial.begin(9600);
+  Serial.begin(9600); // Initialize serial communication
 }
 
 //=========================================================
 void initDisplay() {
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Initialize display
     Serial.println(F("SSD1306 allocation failed"));
     for (;;);
   }
@@ -75,18 +75,16 @@ void initDisplay() {
 }
 
 //=========================================================
-
 void shortBeepBuzzer() {
   digitalWrite(BUZZER_PIN, HIGH);
-  delay(50); // Beep duration
+  delay(50); // Short beep duration
   digitalWrite(BUZZER_PIN, LOW);
 }
 
 //=========================================================
-
 void beepBuzzer() {
   digitalWrite(BUZZER_PIN, HIGH);
-  delay(200); // Beep duration
+  delay(200); // Longer beep duration
   digitalWrite(BUZZER_PIN, LOW);
 }
 
@@ -95,7 +93,7 @@ void updateDisplay() {
   display.setTextColor(WHITE);
   display.clearDisplay();
 
-  // Display top row
+  // Display top row text for flow minutes or focus mode
   String topRowText;
   
   if (currentState == COUNTING_UP) {
@@ -119,7 +117,7 @@ void updateDisplay() {
   display.setCursor(topRowX, 0);
   display.print(topRowText);
 
-  // Display main row
+  // Display main row text for menu or counting status
   String mainRowText;
   
   if (currentState == MENU) {
@@ -156,6 +154,7 @@ void updateDisplay() {
 
 //=========================================================
 bool buttonPressed() {
+  // Check for button press with debounce logic
   if (digitalRead(SW) == LOW && (millis() - buttonDebounceTime > buttonDebounceDelay)) {
     buttonDebounceTime = millis();
     lastActivityTime = millis();
@@ -252,6 +251,7 @@ void resetFlowMinutes() {
 
 //=========================================================
 void handleCounting(unsigned long currentMillis) {
+  // Check for counting activity every minute
   if (!isCounting || (currentMillis - previousMillis < 60000)) return;
 
   previousMillis = currentMillis;
@@ -361,7 +361,7 @@ void handleInactivity(unsigned long currentMillis) {
 
   if (currentState == IDLE && !displayOff && (currentMillis - idleStartTime > displayOffTimeLimit)) {
     displayOff = true;
-    display.ssd1306_command(SSD1306_DISPLAYOFF);
+    display.ssd1306_command(SSD1306_DISPLAYOFF); // Turn off display after extended idle
     Serial.print(millis());
     Serial.println(" - Display turned off after 30 minutes of IDLE.");
   }
@@ -371,7 +371,7 @@ void handleInactivity(unsigned long currentMillis) {
     lastActivityTime = millis();
     
     if (displayOff) {
-      display.ssd1306_command(SSD1306_DISPLAYON);
+      display.ssd1306_command(SSD1306_DISPLAYON); // Turn the display back on
       displayOff = false;
       Serial.print(millis());
       Serial.println(" - Display turned back on.");

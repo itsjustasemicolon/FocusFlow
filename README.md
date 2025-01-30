@@ -23,7 +23,7 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 - **Success Animation:** Short animation at the end of each session for positive reinforcement.
 - **Easy Reset:** Reset your total focus time via the menu or by unplugging the device.
 
-![FocusFlow](https://github.com/user-attachments/assets/ef5a7adf-0809-4d12-9821-14966fce223a)
+![FocusFlow](https://github.com/itsjustasemicolon/focusflow/blob/main/FocusFlow_v1.jpg?raw=true)
 
 ## Bill of Materials (BOM)
 - **Adafruit SSD1306 OLED Display (128x64)**

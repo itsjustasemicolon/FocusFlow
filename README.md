@@ -60,7 +60,7 @@ The firmware consists of a single sketch file, easily compiled using the Arduino
 - **UP Mode:** Start a count-up timer for open-ended focus sessions.
 - **DOWN Mode:** Set a countdown timer and track sessions to completion.
 - **Reset:** Reset the accumulated *Flow* minutes to zero.
-- **IDLE Mode:** A prompt appears after 3 minutes of inactivity; after 30 minutes, the display turns off to save power.
+- **IDLE Mode:** A prompt appears after 5 minutes of inactivity; after 30 minutes, the display turns off to save power.
 
 ### Example Use Case
 1. Select **UP** to start a focus session.

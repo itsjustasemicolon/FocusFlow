@@ -68,8 +68,8 @@ The firmware consists of a single sketch file, easily compiled using the Arduino
 3. Select **DOWN** for a timed break session.
 4. Reset total focus time at the end of the day, if needed.
 
-## Demonstration Video
-[To be updated...](https://github.com/itsjustasemicolon/FocusFlow)
+## Code
+ [FocusFlow_v1.ino](https://github.com/itsjustasemicolon/FocusFlow/blob/main/FocusFlow_v1.ino)
 
 ## Future Enhancements & Contributions
 Potential improvements include:

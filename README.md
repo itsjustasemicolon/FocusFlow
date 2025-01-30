@@ -19,7 +19,7 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 - **Rotary Encoder Control:** Navigate menus and adjust settings effortlessly. Rotate to scroll, click to select.
 - **OLED Display:** Provides real-time session feedback, total accumulated *Flow* minutes, and menu navigation.
 - **Buzzer Feedback:** Alerts for menu navigation, session start, and session end.
-- **Auto IDLE Mode:** Prompts after 5 minutes of inactivity and turns off the display after 10 minutes to conserve energy.
+- **Auto IDLE Mode:** Prompts after 5 minutes of inactivity and turns off the display after 30 minutes to conserve energy.
 - **Success Animation:** Short animation at the end of each session for positive reinforcement.
 - **Easy Reset:** Reset your total focus time via the menu or by unplugging the device.
 

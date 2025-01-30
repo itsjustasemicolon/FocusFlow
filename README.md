@@ -1,4 +1,4 @@
-# FocusFlow - A Seamless Focus Tracking Tool
+# FocusFlow - Blending technology with mindful productivity.
 
 > [!TIP]
 > FocusFlow is designed as a straightforward and effective focus assistant. It works perfectly as is, but it also provides the flexibility for customization. If you want to expand its capabilities, the hardware is robust, the design is tactile and satisfying, and the firmware is modular for easy development.

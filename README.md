@@ -38,11 +38,11 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 | Rotary Encoder SW    | 5   |
 | Rotary Encoder CLK   | 18  |
 | Rotary Encoder DT    | 19  |
-| Rotary Encoder VIN   | VIN |
+| Rotary Encoder VCC   | VCC |
 | Rotary Encoder GND   | GND |
 | OLED SDA             | 21  |
 | OLED SCL             | 22  |
-| OLED VIN             | VIN |
+| OLED VCC             | VCC |
 | OLED GND             | GND |
 | Buzzer +ve           | 23  |
 | Buzzer -ve           | GND  |
@@ -84,7 +84,7 @@ Potential improvements include:
 - [ ] New tracking modes
 - [ ] API integration for external apps (time trackers, to-do lists, automation tools)
 
-If you have ideas or improvements, feel free to contribute! I’m primarily a designer, not a programmer, so your expertise would be invaluable in evolving FocusFlow.
+If you have ideas or improvements, feel free to contribute! I’m primarily a designer, not a programmer, so your expertise would be invaluable in evolVCCg FocusFlow.
 
 ## Disclaimer
 This is an open-source project provided *as is*, with no guarantees. Users should have basic electronics knowledge. If you encounter issues or have suggestions, please open an issue on GitHub.

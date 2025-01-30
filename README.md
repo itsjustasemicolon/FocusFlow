@@ -1,9 +1,9 @@
 # FocusFlow - Blending technology with mindful productivity.
 
 > [!TIP]
-> FocusFlow is designed as a straightforward and effective focus device. It works perfectly as is, but it also provides the flexibility for customization. If you want to expand its capabilities, the hardware is robust, the design is tactile and satisfying, and the firmware is modular for easy development.
+FocusFlow is a simple yet powerful device designed to help you maintain focus. It functions seamlessly as is and offers the versatility to be customized according to your needs. With robust hardware, a tactile and minimalistic design, and modular firmware, it provides a solid foundation for innovation.
 >
-> I'm excited to see how you make it your own!
+>Whether you're enhancing its features or integrating it into a larger system, the possibilities are endless. I'm eager to see how you make it uniquely yours!
 
 ## About FocusFlow
 FocusFlow is a minimalist, tactile tool designed to help you track and improve the time spent on meaningful tasks each day. With a simple yet intuitive interface powered by a rotary encoder and OLED display, it seamlessly integrates into your workflow—whether for focused work sessions, break tracking, or other time-based routines.

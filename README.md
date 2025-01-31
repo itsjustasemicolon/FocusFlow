@@ -47,7 +47,7 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 | Buzzer +ve           | 23  |
 | Buzzer -ve           | GND  |
 
-![Circuit Diagram](https://github.com/itsjustasemicolon/focusflow/blob/main/circuitDiagram.jpg?raw=true)
+![Circuit Diagram](https://github.com/itsjustasemicolon/FocusFlow/blob/main/circuitDiagram.png)
 
 ## Firmware & Assembly
 The firmware consists of a single sketch file, easily compiled using the Arduino IDE (with ESP32 support and necessary libraries installed). Verify functionality before assembling the components on the breadboard.

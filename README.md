@@ -32,7 +32,7 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 - **Breadboard**
 - **Jumper Wires**
 
-## Wiring & Pinout
+## Pinout & Wiring
 | Component            | GPIO Pin |
 |----------------------|-----|
 | Rotary Encoder SW    | 5   |

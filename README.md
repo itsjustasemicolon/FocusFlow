@@ -55,6 +55,10 @@ FocusFlow is a minimalist, tactile tool designed to help you track and improve t
 
 ---
 
+## Demo Video
+To be updated
+
+---
 ## Firmware & Assembly  
 ### Steps  
 1. **Test Components:** Wire everything, upload firmware, and verify functionality before finalizing connections.  

@@ -26,7 +26,7 @@
 - **🎉 Success Animation:** Short animation at the end of each session for positive reinforcement.  
 - **🔄 Easy Reset:** Reset your total focus time via the menu or by unplugging the device.  
 
-![FocusFlow](https://github.com/itsjustasemicolon/focusflow/blob/main/FocusFlow_v1.jpg?raw=true)  
+![FocusFlow](https://github.com/itsjustasemicolon/FocusFlow/blob/main/FocusFlow_v1.jpg)  
 
 ---
 

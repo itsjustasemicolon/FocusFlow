@@ -31,7 +31,7 @@ const unsigned long buttonDebounceDelay = 800; // Debounce time for button press
 
 // Rotary encoder debounce variables
 unsigned long lastRotaryTime = 0;
-const unsigned long rotaryDebounceDelay = 100; // Debounce delay for rotary encoder (150 ms)
+const unsigned long rotaryDebounceDelay = 50; // Debounce delay for rotary encoder (150 ms)
 
 // IDLE mode extended behavior
 const unsigned long displayOffTimeLimit = 30 * 60000; // Display off after 30 minutes of inactivity
@@ -97,11 +97,11 @@ void updateDisplay() {
   // Top row text
   String topRowText;
   if (currentState == COUNTING_UP) {
-    topRowText = "Focus! \x18";
+    topRowText = "Focus \x18";
   } else if (currentState == COUNTING_DOWN) {
-    topRowText = "Focus! \x19";
+    topRowText = "Focus \x19";
   } else if (currentState == COUNTING_BREAK) {
-    topRowText = "Break"; // Updated header
+    topRowText = "Break \x19"; // Updated header
   } else if (currentState == SELECTING_DOWN_DURATION) {
     topRowText = "Set Focus";
   } else if (currentState == SELECTING_BREAK_DURATION) {

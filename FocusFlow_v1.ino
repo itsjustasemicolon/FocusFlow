@@ -187,6 +187,7 @@ void handleButtonPresses(unsigned long currentMillis) {
       if (menuIndex == 0) {
         startCountingUp();
       } else if (menuIndex == 1) {
+        shortBeepBuzzer(); 
         startSelectingDownDuration();
       } else if (menuIndex == 2) {
         resetFlowMinutes();
@@ -388,10 +389,10 @@ int getRotation() {
 void handleRotaryInput() {
   int rotation = getRotation();
   if (rotation == 0) return;
-  shortBeepBuzzer();
   lastActivityTime = millis();
 
   if (currentState == MENU) {
+    shortBeepBuzzer();
     menuIndex = (menuIndex + rotation + 3) % 3;
     Serial.print("Menu option: "); Serial.println(menuOptions[menuIndex]);
   } 

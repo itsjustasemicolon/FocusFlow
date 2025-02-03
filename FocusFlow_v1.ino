@@ -16,11 +16,13 @@ String menuOptions[3] = {"UP", "DOWN", "RESET"}; // Menu options
 unsigned long lastActivityTime = 0; // Tracks the last user activity timestamp
 const unsigned long inactivityLimit = 5 * 60000; // Inactivity timeout for idle state (5 minutes)
 
-enum State { MENU, COUNTING_UP, COUNTING_DOWN, SELECTING_DOWN_DURATION, IDLE };
+enum State { MENU, COUNTING_UP, COUNTING_DOWN, SELECTING_DOWN_DURATION, 
+             IDLE, COUNTING_BREAK, SELECTING_BREAK_DURATION };
 State currentState = MENU;
 
 int countdownValue = 50; // Default countdown timer value in minutes
 int initialCountdownValue = 50;
+int breakDuration = 10;  // User-adjustable break duration in minutes
 unsigned long previousMillis = 0;
 int elapsedMinutes = 0;
 bool isCounting = false;
@@ -29,7 +31,7 @@ const unsigned long buttonDebounceDelay = 800; // Debounce time for button press
 
 // Rotary encoder debounce variables
 unsigned long lastRotaryTime = 0;
-const unsigned long rotaryDebounceDelay = 150; // Debounce delay for rotary encoder (150 ms)
+const unsigned long rotaryDebounceDelay = 100; // Debounce delay for rotary encoder (150 ms)
 
 // IDLE mode extended behavior
 const unsigned long displayOffTimeLimit = 30 * 60000; // Display off after 30 minutes of inactivity
@@ -92,13 +94,18 @@ void updateDisplay() {
   display.setTextColor(WHITE);
   display.clearDisplay();
 
-  // Display top row text for flow minutes or focus mode
+  // Top row text
   String topRowText;
-  
   if (currentState == COUNTING_UP) {
     topRowText = "Focus! \x18";
   } else if (currentState == COUNTING_DOWN) {
     topRowText = "Focus! \x19";
+  } else if (currentState == COUNTING_BREAK) {
+    topRowText = "Break"; // Updated header
+  } else if (currentState == SELECTING_DOWN_DURATION) {
+    topRowText = "Set Focus";
+  } else if (currentState == SELECTING_BREAK_DURATION) {
+    topRowText = "Set Break";
   } else {
     if (flowMinutes >= 60) {
       int hours = flowMinutes / 60;
@@ -129,7 +136,8 @@ void updateDisplay() {
     } else {
       mainRowText = String(elapsedMinutes) + "m";
     }
-  } else if (currentState == COUNTING_DOWN || currentState == SELECTING_DOWN_DURATION) {
+  } else if (currentState == SELECTING_DOWN_DURATION || 
+             currentState == COUNTING_DOWN || currentState == COUNTING_BREAK) {
     if (countdownValue >= 60) {
       int hours = countdownValue / 60;
       int minutes = countdownValue % 60;
@@ -137,16 +145,24 @@ void updateDisplay() {
     } else {
       mainRowText = String(countdownValue) + "m";
     }
+  } else if (currentState == SELECTING_BREAK_DURATION) {
+    if (breakDuration >= 60) {
+      int hours = breakDuration / 60;
+      int minutes = breakDuration % 60;
+      mainRowText = String(hours) + "h" + String(minutes) + "m";
+    } else {
+      mainRowText = String(breakDuration) + "m";
+    }
   } else if (currentState == IDLE) {
     mainRowText = "IDLE";
   }
   
   int mainRowTextWidth = mainRowText.length() * 24;
   int mainRowX = (128 - mainRowTextWidth) / 2;
-
   display.setTextSize(4);
   display.setCursor(mainRowX, 30);
   display.print(mainRowText);
+  
   
   display.display();
 }
@@ -181,12 +197,24 @@ void handleButtonPresses(unsigned long currentMillis) {
       confirmCountdownSelection();
       break;
 
+    case SELECTING_BREAK_DURATION:
+      confirmBreakDuration();
+      break;
+
     case COUNTING_UP:
       stopCountingUp();
       break;
 
     case COUNTING_DOWN:
       stopCountingDown();
+      break;
+
+    case COUNTING_BREAK:
+      currentState = MENU;
+      isCounting = false;
+      beepBuzzer();
+      successAnimation();
+      Serial.println("Break stopped. Returning to MENU.");
       break;
   }
   updateDisplay();
@@ -198,7 +226,7 @@ void startCountingUp() {
   elapsedMinutes = 0;
   isCounting = true;
   lastActivityTime = millis();
-  beepBuzzer();  // Beep when starting UP timer
+  beepBuzzer();
   Serial.println("Counting UP started.");
 }
 
@@ -213,17 +241,30 @@ void startSelectingDownDuration() {
 //=========================================================
 void confirmCountdownSelection() {
   initialCountdownValue = countdownValue;
+  currentState = SELECTING_BREAK_DURATION;
+  lastActivityTime = millis();
+  updateDisplay();
+  Serial.println("Now selecting BREAK duration.");
+}
+
+//=========================================================
+void confirmBreakDuration() {
   currentState = COUNTING_DOWN;
   isCounting = true;
   lastActivityTime = millis();
-  beepBuzzer();  // Beep when starting DOWN timer
-  Serial.print("Counting DOWN started with "); Serial.println(countdownValue);
+  beepBuzzer();
+  Serial.print("Starting COUNTING_DOWN with ");
+  Serial.print(initialCountdownValue);
+  Serial.print("m focus and ");
+  Serial.print(breakDuration);
+  Serial.println("m break");
+  updateDisplay();
 }
 
 //=========================================================
 void stopCountingUp() {
   flowMinutes += elapsedMinutes;
-  beepBuzzer();  // Beep when exiting UP timer
+  beepBuzzer();
   successAnimation();
   currentState = MENU;
   isCounting = false;
@@ -233,7 +274,7 @@ void stopCountingUp() {
 //=========================================================
 void stopCountingDown() {
   flowMinutes += (initialCountdownValue - countdownValue);
-  beepBuzzer();  // Beep when exiting DOWN timer
+  beepBuzzer();
   successAnimation();
   currentState = MENU;
   isCounting = false;
@@ -249,8 +290,8 @@ void resetFlowMinutes() {
 }
 
 //=========================================================
+//=========================================================
 void handleCounting(unsigned long currentMillis) {
-  // Check for counting activity every minute
   if (!isCounting || (currentMillis - previousMillis < 60000)) return;
 
   previousMillis = currentMillis;
@@ -259,18 +300,42 @@ void handleCounting(unsigned long currentMillis) {
     elapsedMinutes++;
     updateDisplay();
     Serial.print("Counting UP: "); Serial.println(elapsedMinutes);
-  } else if (currentState == COUNTING_DOWN) {
+  } 
+  else if (currentState == COUNTING_DOWN) {
     countdownValue--;
     if (countdownValue <= 0) {
       flowMinutes += initialCountdownValue;
-      beepBuzzer();  // Beep when countdown finishes
+      beepBuzzer();
       successAnimation();
-      currentState = MENU;
-      isCounting = false;
-      Serial.println("Countdown finished, returning to MENU.");
+      currentState = COUNTING_BREAK;
+      countdownValue = breakDuration; // Set to break duration
+      isCounting = true;
+      previousMillis = currentMillis;
+      updateDisplay(); // Force immediate display update
+      Serial.println("Countdown finished, starting break timer.");
     }
     updateDisplay();
     Serial.print("Counting DOWN: "); Serial.println(countdownValue);
+  } 
+  else if (currentState == COUNTING_BREAK) {
+    countdownValue--;
+    if (countdownValue <= 0) {
+      for (int i = 0; i < 3; i++) {
+        digitalWrite(BUZZER_PIN, HIGH);
+        delay(150);
+        digitalWrite(BUZZER_PIN, LOW);
+        if (i < 2) delay(100);
+      }
+      successAnimation();
+      currentState = COUNTING_DOWN;
+      countdownValue = initialCountdownValue;
+      isCounting = true;
+      previousMillis = currentMillis;
+      updateDisplay(); // Force immediate display update
+      Serial.println("Break finished, restarting COUNTING_DOWN.");
+    }
+    updateDisplay();
+    Serial.print("Counting BREAK: "); Serial.println(countdownValue);
   }
 }
 
@@ -306,7 +371,8 @@ int getRotation() {
   static int previousCLK = digitalRead(CLK);
   int currentCLK = digitalRead(CLK);
   
-  if (currentCLK == LOW && previousCLK == HIGH && (millis() - lastRotaryTime > rotaryDebounceDelay)) {
+  if (currentCLK == LOW && previousCLK == HIGH && 
+     (millis() - lastRotaryTime > rotaryDebounceDelay)) {
     lastRotaryTime = millis();
     int DTValue = digitalRead(DT);
 
@@ -324,21 +390,21 @@ void handleRotaryInput() {
   if (rotation == 0) return;
   shortBeepBuzzer();
   lastActivityTime = millis();
-  Serial.print(millis());
-  Serial.print(" - Rotation detected, activity timer reset. Rotation: ");
-  Serial.println(rotation);
 
   if (currentState == MENU) {
     menuIndex = (menuIndex + rotation + 3) % 3;
-    updateDisplay();
-    Serial.print(millis());
-    Serial.print(" - Menu option: "); Serial.println(menuOptions[menuIndex]);
-  } else if (currentState == SELECTING_DOWN_DURATION) {
+    Serial.print("Menu option: "); Serial.println(menuOptions[menuIndex]);
+  } 
+  else if (currentState == SELECTING_DOWN_DURATION) {
     countdownValue = max(1, countdownValue + rotation);
-    updateDisplay();
-    Serial.print(millis());
-    Serial.print(" - Countdown value: "); Serial.println(countdownValue);
+    Serial.print("Focus duration: "); Serial.println(countdownValue);
+  } 
+  else if (currentState == SELECTING_BREAK_DURATION) {
+    breakDuration = max(1, breakDuration + rotation);
+    Serial.print("Break duration: "); Serial.println(breakDuration);
   }
+  
+  updateDisplay();
 }
 
 //=========================================================
@@ -346,38 +412,43 @@ void handleInactivity(unsigned long currentMillis) {
   if (currentMillis >= lastActivityTime) {
     unsigned long timeSinceLastActivity = currentMillis - lastActivityTime;
 
-    if ((currentState == MENU || currentState == SELECTING_DOWN_DURATION) && 
-        (timeSinceLastActivity > inactivityLimit)) {
+    // Handle break duration selection timeout
+    if (currentState == SELECTING_BREAK_DURATION && 
+        timeSinceLastActivity > 5000) {
+      confirmBreakDuration();
+      Serial.println("Break duration auto-confirmed after timeout");
+    }
+    // Handle general inactivity timeout
+    else if ((currentState == MENU || currentState == SELECTING_DOWN_DURATION) && 
+            (timeSinceLastActivity > inactivityLimit)) {
       if (currentState != IDLE) {
         currentState = IDLE;
         idleStartTime = millis();
-        updateDisplay();
-        Serial.print(millis());
-        Serial.println(" - IDLE state entered due to inactivity.");
+        Serial.println("Entering IDLE state due to inactivity");
       }
     }
   }
 
-  if (currentState == IDLE && !displayOff && (currentMillis - idleStartTime > displayOffTimeLimit)) {
+  // Handle display power management
+  if (currentState == IDLE && !displayOff && 
+     (currentMillis - idleStartTime > displayOffTimeLimit)) {
     displayOff = true;
-    display.ssd1306_command(SSD1306_DISPLAYOFF); // Turn off display after extended idle
-    Serial.print(millis());
-    Serial.println(" - Display turned off after 30 minutes of IDLE.");
+    display.ssd1306_command(SSD1306_DISPLAYOFF);
+    Serial.println("Display turned off");
   }
 
+  // Wake from IDLE state
   if (currentState == IDLE && (getRotation() != 0 || buttonPressed())) {
     currentState = MENU;
     lastActivityTime = millis();
     
     if (displayOff) {
-      display.ssd1306_command(SSD1306_DISPLAYON); // Turn the display back on
+      display.ssd1306_command(SSD1306_DISPLAYON);
       displayOff = false;
-      Serial.print(millis());
-      Serial.println(" - Display turned back on.");
+      Serial.println("Display turned on");
     }
-
+    
     updateDisplay();
-    Serial.print(millis());
-    Serial.println(" - Exiting IDLE mode. Back to MENU.");
+    Serial.println("Exiting IDLE state");
   }
 }

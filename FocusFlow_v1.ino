@@ -62,7 +62,7 @@ void initHardware() {
   pinMode(DT, INPUT);  // Rotary encoder DT pin
   pinMode(SW, INPUT);  // Rotary encoder switch pin
   pinMode(BUZZER_PIN, OUTPUT);  // Buzzer initialization
-  Serial.begin(9600); // Initialize serial communication
+  Serial.begin(19200); // Initialize serial communication
 }
 
 //=========================================================
@@ -425,6 +425,8 @@ void handleInactivity(unsigned long currentMillis) {
       if (currentState != IDLE) {
         currentState = IDLE;
         idleStartTime = millis();
+        updateDisplay();
+        shortBeepBuzzer();
         Serial.println("Entering IDLE state due to inactivity");
       }
     }
@@ -448,7 +450,7 @@ void handleInactivity(unsigned long currentMillis) {
       displayOff = false;
       Serial.println("Display turned on");
     }
-    
+    shortBeepBuzzer();
     updateDisplay();
     Serial.println("Exiting IDLE state");
   }

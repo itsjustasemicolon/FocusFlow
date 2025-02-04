@@ -34,7 +34,7 @@ unsigned long lastRotaryTime = 0;
 const unsigned long rotaryDebounceDelay = 50; // Debounce delay for rotary encoder (150 ms)
 
 // IDLE mode extended behavior
-const unsigned long displayOffTimeLimit = 30 * 60000; // Display off after 30 minutes of inactivity
+const unsigned long displayOffTimeLimit = 25 * 60000; // Display off after 30 minutes of inactivity
 unsigned long idleStartTime = 0;
 bool displayOff = false;
 
